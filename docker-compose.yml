@@ -1,0 +1,61 @@
+services:
+  user-webserver:
+    image: nginx:alpine
+    container_name: UserManagement-webserver
+    working_dir: /application
+    volumes:
+      - ./UserManagementService/:/application
+      - ./UserManagementService/sourcefiles/nginx:/etc/nginx/conf.d
+    ports:
+      - "8000:80"
+
+  user-php-fpm:
+    build: UserManagementService/sourcefiles/php
+    container_name: UserManagement-php-fpm
+    working_dir: /application
+    environment:
+      - PHP_WORKER_INSTALL_BCMATH=true
+    volumes:
+      - ./UserManagementService:/application
+
+  user-pgsql:
+    image: postgres:13
+    container_name: UserManagement-pgsql
+    env_file:
+      - UserManagementService/.env
+    environment:
+      POSTGRES_DB: 'laravel'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'root'
+    ports:
+      - '5432:5432'
+
+  task-webserver:
+    image: nginx:alpine
+    container_name: TaskManagement-webserver
+    working_dir: /application
+    volumes:
+      - ./TaskManagementService/:/application
+      - ./TaskManagementService/sourcefiles/nginx:/etc/nginx/conf.d
+    ports:
+      - "8001:80"
+  task-php-fpm:
+    build: TaskManagementService/sourcefiles/php
+    container_name: TaskManagement-php-fpm
+    working_dir: /application
+    environment:
+      - PHP_WORKER_INSTALL_BCMATH=true
+    volumes:
+      - ./TaskManagementService:/application
+
+  task-pgsql:
+    image: postgres:13
+    container_name: TaskManagement-pgsql
+    env_file:
+      - TaskManagementService/.env
+    environment:
+      POSTGRES_DB: 'laravel'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'root'
+    ports:
+      - '5433:5432'
