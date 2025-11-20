@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UserGetrequest;
 use App\Http\Requests\V1\UserPostrequest;
 use App\Http\Resources\V1\UserResource;
+use App\Models\User;
 use App\Repositories\V1\UserRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Prettus\Validator\Exceptions\ValidatorException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -40,7 +43,7 @@ class UserController extends Controller
         } catch (ValidatorException $e) {
             return response()->json([
                 'error' => $e->getMessage(),
-            ], 429);
+            ], 422);
         }
         catch (\Exception $e) {
             return response()->json([
@@ -52,9 +55,17 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse|UserResource
     {
-        //
+        try{
+            return new UserResource($this->repository->find($id));
+        }
+        catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Пользователя с id {$id} не существует',
+            ], 404);
+        }
+
     }
 
     /**
