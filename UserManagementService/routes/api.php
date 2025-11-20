@@ -8,6 +8,7 @@ Route::prefix('V1')->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{id}', 'show');
+        Route::patch('/{id}', 'update');
     });
 
 });
