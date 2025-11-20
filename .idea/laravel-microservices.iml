@@ -248,6 +248,12 @@
       <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/TaskManagementService/vendor/laravel/sanctum" />
+      <excludeFolder url="file://$MODULE_DIR$/TaskManagementService/vendor/prettus/l5-repository" />
+      <excludeFolder url="file://$MODULE_DIR$/TaskManagementService/vendor/prettus/laravel-validation" />
+      <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/laravel/sanctum" />
+      <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/prettus/l5-repository" />
+      <excludeFolder url="file://$MODULE_DIR$/UserManagementService/vendor/prettus/laravel-validation" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
