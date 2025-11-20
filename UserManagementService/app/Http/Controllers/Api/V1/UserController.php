@@ -87,8 +87,14 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        try {
+            return response()->json($this->repository->delete($id), 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Пользователя с id {$id} не существует',
+            ], 404);
+        }
     }
 }
