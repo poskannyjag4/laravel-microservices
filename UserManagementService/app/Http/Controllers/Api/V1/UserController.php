@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\UserGetrequest;
+use App\Repositories\V1\UserRepository;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+    function __construct(
+        UserRepository $repository,
+    )
+    {
+
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(UserGetrequest $request)
     {
-        //
+
     }
 
     /**
