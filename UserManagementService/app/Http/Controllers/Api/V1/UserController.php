@@ -4,25 +4,19 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UserGetrequest;
+use App\Http\Resources\V1\UserResource;
 use App\Repositories\V1\UserRepository;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller
 {
-
-    function __construct(
-        UserRepository $repository,
-    )
-    {
-
-    }
     /**
      * Display a listing of the resource.
      */
-    public function index(UserGetrequest $request)
+    public function index(UserGetrequest $request, UserRepository $repository): AnonymousResourceCollection
     {
-
+        return UserResource::collection($repository->paginate(10));
     }
 
     /**
@@ -40,7 +34,6 @@ class UserController extends Controller
     {
         //
     }
-
 
     /**
      * Update the specified resource in storage.
