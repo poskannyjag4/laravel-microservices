@@ -7,6 +7,7 @@ use App\Http\Requests\V1\UserGetrequest;
 use App\Repositories\V1\UserRepository;
 use Illuminate\Http\Request;
 
+
 class UserController extends Controller
 {
 
