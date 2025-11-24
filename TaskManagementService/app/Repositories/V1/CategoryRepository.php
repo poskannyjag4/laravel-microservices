@@ -10,9 +10,8 @@ use Prettus\Repository\Eloquent\BaseRepository;
  */
 class CategoryRepository extends BaseRepository
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function model()
     {
