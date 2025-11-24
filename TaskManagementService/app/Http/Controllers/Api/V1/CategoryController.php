@@ -19,11 +19,19 @@ class CategoryController extends Controller
         protected CategoryRepository $repository,
     ) {}
 
+    /**
+     * @param CategoryGetRequest $request
+     * @return AnonymousResourceCollection
+     */
     public function index(CategoryGetRequest $request): AnonymousResourceCollection
     {
         return CategoryResource::collection($this->repository->with($request->getIncludes())->paginate(10));
     }
 
+    /**
+     * @param CategoryPostRequest $request
+     * @return JsonResponse|CategoryResource
+     */
     public function store(CategoryPostRequest $request): JsonResponse|CategoryResource
     {
         try {
@@ -41,6 +49,11 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * @param CategoryGetRequest $request
+     * @param string $id
+     * @return JsonResponse|CategoryResource
+     */
     public function show(CategoryGetRequest $request, string $id): JsonResponse|CategoryResource
     {
         try {
@@ -56,6 +69,11 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * @param CategoryUpdateRequest $request
+     * @param string $id
+     * @return JsonResponse|CategoryResource
+     */
     public function update(CategoryUpdateRequest $request, string $id): JsonResponse|CategoryResource
     {
 
@@ -70,9 +88,23 @@ class CategoryController extends Controller
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'error' => "Задачи с id {$id} не существует",
+                'error' => "Категории с id {$id} не существует",
             ], 404);
         }
+    }
 
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            return response()->json($this->repository->delete($id), 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => "Категории с id {$id} не существует",
+            ], 404);
+        }
     }
 }
