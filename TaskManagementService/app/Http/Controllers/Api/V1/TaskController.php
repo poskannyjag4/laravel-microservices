@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\TaskPostRequest;
+use App\Http\Requests\V1\TaskUpdateRequest;
 use App\Http\Resources\V1\TaskResource;
 use App\Repositories\V1\TaskRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -55,6 +56,26 @@ class TaskController extends Controller
             return response()->json([
                 'error' => $e->getMessage(),
             ], 500);
+        }
+
+    }
+
+    public function update(TaskUpdateRequest $request, string $id): JsonResponse|TaskResource
+    {
+
+        $taskData = $request->validated();
+        try {
+            $this->repository->update($taskData, $id);
+
+            return new TaskResource($this->repository->find($id));
+        } catch (ValidatorException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Задачи с id {$id} не существует',
+            ], 404);
         }
 
     }
