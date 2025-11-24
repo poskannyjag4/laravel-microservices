@@ -26,14 +26,14 @@ class TaskResource extends JsonResource
 
             'relationships' => [
                 'author' => [
-                    'related' => env('USER_SERVICE', 'https:localhost:8000/api/V1/') . '/users/' . $this->user_id,
+                    'related' => env('USER_SERVICE', 'http:localhost:8000/api/V1/') . '/users/' . $this->user_id,
                     'data' => [
                         'type' => 'users',
                         'id' => $this->user_id
                     ]
                 ],
                 'category' => [
-                    'related' => env('APP_URL') . '/api/V1/categories' . $this->category_id,
+                    'related' => env('APP_URL') . '/api/V1/categories/' . $this->category_id,
                     'data' => [
                         'type' => 'categories',
                         'id' => $this->category_id
