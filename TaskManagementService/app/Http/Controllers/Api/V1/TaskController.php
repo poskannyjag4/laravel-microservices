@@ -50,7 +50,7 @@ class TaskController extends Controller
             return new TaskResource($this->repository->find($id));
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'error' => 'Пользователя с id {$id} не существует',
+                'error' => "Задачи с id {$id} не существует",
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
@@ -74,9 +74,20 @@ class TaskController extends Controller
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'error' => 'Задачи с id {$id} не существует',
+                'error' => "Задачи с id {$id} не существует",
             ], 404);
         }
 
+    }
+
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            return response()->json($this->repository->delete($id), 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'error' => "Задачи с id {$id} не существует",
+            ], 404);
+        }
     }
 }
