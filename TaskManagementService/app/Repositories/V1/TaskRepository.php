@@ -10,9 +10,8 @@ use Prettus\Repository\Eloquent\BaseRepository;
  */
 class TaskRepository extends BaseRepository
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function model()
     {

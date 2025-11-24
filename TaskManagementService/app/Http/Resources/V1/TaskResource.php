@@ -2,9 +2,13 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Task
+ */
 class TaskResource extends JsonResource
 {
     /**
@@ -20,26 +24,26 @@ class TaskResource extends JsonResource
 
             'attributes' => [
                 'title' => $this->title,
-                'description' =>$this->description,
-                'status' => $this->status
+                'description' => $this->description,
+                'status' => $this->status,
             ],
 
             'relationships' => [
                 'author' => [
-                    'related' => env('USER_SERVICE', 'http:localhost:8000/api/V1/') . '/users/' . $this->user_id,
+                    'related' => config('USER_SERVICE', 'http:localhost:8000/api/V1/').'/users/'.$this->user_id,
                     'data' => [
                         'type' => 'users',
-                        'id' => $this->user_id
-                    ]
+                        'id' => $this->user_id,
+                    ],
                 ],
                 'category' => [
-                    'related' => env('APP_URL') . '/api/V1/categories/' . $this->category_id,
+                    'related' => config('APP_URL').'/api/V1/categories/'.$this->category_id,
                     'data' => [
                         'type' => 'categories',
-                        'id' => $this->category_id
-                    ]
-                ]
-            ]
+                        'id' => $this->category_id,
+                    ],
+                ],
+            ],
         ];
     }
 }
