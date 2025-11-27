@@ -67,3 +67,14 @@ services:
     volumes:
       - './sourcefiles/rabbitmq/data:/var/lib/rabbitmq'
       - './sourcefiles/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf'
+  task-redis:
+    image: redis:latest
+    container_name: 'task-redis'
+    environment:
+      - REDIS_PASSWORD= 'root'
+      - REDIS_USER='user'
+      - REDIS_USER_PASSWORD='root'
+    ports:
+      - '6380:6380'
+    volumes:
+      - './TaskManagementService/redis/data:/data'
