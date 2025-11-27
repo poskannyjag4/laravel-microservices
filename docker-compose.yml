@@ -3,13 +3,11 @@ services:
     image: nginx:alpine
     container_name: UserManagement-webserver
     working_dir: /application
-    env_file:
-      - UserManagementService/.env
     volumes:
       - ./UserManagementService/:/application
       - ./UserManagementService/sourcefiles/nginx:/etc/nginx/conf.d
     ports:
-      - "${NGINX_PORT}:80"
+      - "8000:80"
 
   user-php-fpm:
     build: UserManagementService/sourcefiles/php
@@ -26,23 +24,21 @@ services:
     env_file:
       - UserManagementService/.env
     environment:
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: 'laravel'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'root'
     ports:
-      - '${DB_PORT}:5432'
+      - '5432:5432'
 
   task-webserver:
     image: nginx:alpine
     container_name: TaskManagement-webserver
     working_dir: /application
-    env_file:
-      - TaskManagementService/.env
     volumes:
       - ./TaskManagementService/:/application
       - ./TaskManagementService/sourcefiles/nginx:/etc/nginx/conf.d
     ports:
-      - "${NGINX_PORT}:80"
+      - "8001:80"
   task-php-fpm:
     build: TaskManagementService/sourcefiles/php
     container_name: TaskManagement-php-fpm
@@ -58,11 +54,11 @@ services:
     env_file:
       - TaskManagementService/.env
     environment:
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: 'laravel'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'root'
     ports:
-      - '${DB_PORT}:5432'
+      - '5433:5432'
   rabbitmq:
     image: rabbitmq:4.2-management
     ports:
