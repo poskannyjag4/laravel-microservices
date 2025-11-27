@@ -11,7 +11,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install curl \
     pdo_pgsql \
     intl  \
     zip \
-    bcmath
+    bcmath \
+    sockets
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
