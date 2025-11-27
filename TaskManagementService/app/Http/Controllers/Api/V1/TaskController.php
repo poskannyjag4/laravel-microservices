@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\TaskPostRequest;
-use App\Http\Requests\V1\TaskUpdateRequest;
+use App\Http\Requests\V1\Task\TaskPostRequest;
+use App\Http\Requests\V1\Task\TaskUpdateRequest;
 use App\Http\Resources\V1\TaskResource;
 use App\Repositories\V1\TaskRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
