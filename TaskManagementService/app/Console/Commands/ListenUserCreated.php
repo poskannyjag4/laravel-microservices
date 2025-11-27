@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -17,6 +18,8 @@ class ListenUserCreated extends Command
     const PASS = 'root';
 
     const QUEUE = 'UserNotification';
+
+    const DURATION = 3600;
 
     /**
      * The name and signature of the console command.
@@ -45,7 +48,11 @@ class ListenUserCreated extends Command
         echo " [*] Waiting for messages. To exit press CTRL+C\n";
 
         $callback = function (AMQPMessage $msg) {
-            echo ' [x] Received ', $msg->getBody(), "\n";
+            $userId = json_decode($msg->getBody())->id;
+
+            Cache::put("users-{$userId}", $msg->getBody(), self::DURATION);
+            echo "Пользователь с id {$userId} сохранен\n";
+
         };
 
         $channel->basic_consume(self::QUEUE, '', false, true, false, false, $callback);
