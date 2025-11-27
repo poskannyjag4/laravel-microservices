@@ -37,6 +37,7 @@ class UserController extends Controller
         try {
             $user = $this->repository->create($userData);
             UserCreated::dispatch($user);
+
             return new UserResource($user);
         } catch (ValidatorException $e) {
             return response()->json([

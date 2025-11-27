@@ -3,20 +3,22 @@
 namespace App\Listeners;
 
 use App\Events\UserCreated;
-use App\Models\User;
 use Exception;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class NotifyServices
 {
     const HOST = 'rabbitmq';
+
     const PORT = 5672;
+
     const USER = 'user';
+
     const PASS = 'root';
+
     const QUEUE = 'UserNotification';
+
     /**
      * Create the event listener.
      */
@@ -27,6 +29,7 @@ class NotifyServices
 
     /**
      * Handle the event.
+     *
      * @throws Exception
      */
     public function handle(UserCreated $event): void
