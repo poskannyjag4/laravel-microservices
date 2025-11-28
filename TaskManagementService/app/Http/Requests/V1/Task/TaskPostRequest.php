@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1\Task;
 
+use App\Rules\V1\UserExists;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +27,7 @@ class TaskPostRequest extends FormRequest
             'title' => 'required|string',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'user_id' => 'required|integer',
+            'user_id' => ['required', 'integer', new UserExists],
         ];
     }
 }
