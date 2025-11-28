@@ -18,9 +18,6 @@ class TaskController extends Controller
         protected TaskRepository $repository,
     ) {}
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): AnonymousResourceCollection
     {
         return TaskResource::collection($this->repository->paginate(10));

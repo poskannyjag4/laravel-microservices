@@ -21,7 +21,8 @@ class UserController extends Controller
     ) {}
 
     /**
-     * Display a listing of the resource.
+     * @param UserGetrequest $request
+     * @return AnonymousResourceCollection
      */
     public function index(UserGetrequest $request): AnonymousResourceCollection
     {
@@ -29,12 +30,13 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param UserPostRequest $request
+     * @return JsonResponse|UserResource
      */
     public function store(UserPostRequest $request): JsonResponse|UserResource
     {
-        $userData = $request->validated();
         try {
+            $userData = $request->validated();
             $user = $this->repository->create($userData);
             UserCreated::dispatch($user);
 
@@ -51,7 +53,8 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @param string $id
+     * @return JsonResponse|UserResource
      */
     public function show(string $id): JsonResponse|UserResource
     {
@@ -66,15 +69,15 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @param UserUpdateRequest $request
+     * @param string $id
+     * @return JsonResponse|UserResource
      */
     public function update(UserUpdateRequest $request, string $id): JsonResponse|UserResource
     {
-
-        $userData = $request->validated();
         try {
+            $userData = $request->validated();
             $this->repository->update($userData, $id);
-
             return new UserResource($this->repository->find($id));
         } catch (ValidatorException $e) {
             return response()->json([
@@ -89,7 +92,8 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @param string $id
+     * @return JsonResponse
      */
     public function destroy(string $id): JsonResponse
     {

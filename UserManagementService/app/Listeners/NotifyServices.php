@@ -28,9 +28,8 @@ class NotifyServices
     }
 
     /**
-     * Handle the event.
-     *
-     * @throws Exception
+     * @param UserCreated $event
+     * @return void
      */
     public function handle(UserCreated $event): void
     {
