@@ -18,11 +18,18 @@ class TaskController extends Controller
         protected TaskRepository $repository,
     ) {}
 
+    /**
+     * @return AnonymousResourceCollection
+     */
     public function index(): AnonymousResourceCollection
     {
         return TaskResource::collection($this->repository->paginate(10));
     }
 
+    /**
+     * @param TaskPostRequest $request
+     * @return JsonResponse|TaskResource
+     */
     public function store(TaskPostRequest $request): JsonResponse|TaskResource
     {
         try {
@@ -41,6 +48,10 @@ class TaskController extends Controller
 
     }
 
+    /**
+     * @param string $id
+     * @return JsonResponse|TaskResource
+     */
     public function show(string $id): JsonResponse|TaskResource
     {
         try {
@@ -57,6 +68,11 @@ class TaskController extends Controller
 
     }
 
+    /**
+     * @param TaskUpdateRequest $request
+     * @param string $id
+     * @return JsonResponse|TaskResource
+     */
     public function update(TaskUpdateRequest $request, string $id): JsonResponse|TaskResource
     {
 
@@ -77,6 +93,10 @@ class TaskController extends Controller
 
     }
 
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
     public function destroy(string $id): JsonResponse
     {
         try {
