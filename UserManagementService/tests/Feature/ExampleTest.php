@@ -87,7 +87,7 @@ class ExampleTest extends TestCase
 
         $response = $this->patchJson(self::baseUrl . '/' . $user->id, $update_data);
 
-        $response->assertStatus(200)->assertJson(fn (AssertableJson $json) =>
+        $response->assertStatus(200)->assertValid()->assertJson(fn (AssertableJson $json) =>
         $json->has('data', fn (AssertableJson $json) =>
         $json->where('type', 'users')
             ->where('id', $user->id)
@@ -95,5 +95,15 @@ class ExampleTest extends TestCase
             $json->where('name', $update_data['name'])
                 ->where('email', $user->email))));
 
+    }
+
+    public function test_delete_user(){
+        $user = User::factory()->create();
+
+        $response = $this->deleteJson(self::baseUrl . '/' . $user->id);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 }
