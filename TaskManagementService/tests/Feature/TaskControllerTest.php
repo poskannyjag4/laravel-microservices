@@ -77,4 +77,19 @@ class TaskControllerTest extends TestCase
                 )
             ))->assertJsonPath('data.relationships.author.data.id', $create_data['user_id'])->assertJsonPath('data.relationships.category.data.id', $category->id);
     }
+
+    public function test_create_task_with_invalid_data()
+    {
+        $category = Category::factory()->create();
+        $create_data = [
+            'title' => '',
+            'description' => 'test_description',
+            'category_id' => 9999,
+            'user_id' => 55555,
+        ];
+
+        $response = $this->postJson(self::baseUrl, $create_data);
+
+        $response->assertStatus(422)->assertInvalid(['title', 'category_id', 'user_id']);
+    }
 }
