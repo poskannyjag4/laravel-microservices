@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 class CategoryGetRequest extends FormRequest
 {
     const INCLUDES = [
-        'includeTasks' => 'tasks'
+        'includeTasks' => 'tasks',
     ];
 
     /**
