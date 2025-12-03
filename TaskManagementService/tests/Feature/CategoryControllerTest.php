@@ -110,4 +110,12 @@ class CategoryControllerTest extends TestCase
 
         $response->assertStatus(422)->assertJsonValidationErrors(['name']);
     }
+
+    public function test_delete_category(){
+        $category = Category::factory()->create();
+
+        $response = $this->deleteJson(self::baseUrl . '/' . $category->id);
+
+        $response->assertStatus(200);
+    }
 }
