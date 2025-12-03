@@ -83,4 +83,21 @@ class CategoryControllerTest extends TestCase
                 )
             ));
     }
+
+    public function test_create_category_with_valid_data(){
+        $create_data = [
+            'name' => 'created_name',
+        ];
+
+        $response = $this->postJson(self::baseUrl, $create_data);
+
+        $response->assertStatus(201)->assertValid()->assertJson(fn (AssertableJson $json) => $json->has('data')
+            ->has('data', fn (AssertableJson $json) =>
+            $json->where('type', 'categories')
+                ->has('id')
+                ->has('attributes', fn (AssertableJson $json) =>
+                $json->whereType('name', 'string')
+                )
+            ));
+    }
 }
