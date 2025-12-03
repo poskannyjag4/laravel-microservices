@@ -51,5 +51,23 @@ class ExampleTest extends TestCase
                                  ->where('email', $user->email))));
     }
 
+    public function test_create_new_user_with_valid_data(){
+        $test_user = new User([
+            'name' => 'test_name',
+            'email' => 'test_email@mail.com',
+        ]);
 
+        $response = $this->withHeader('Accept', 'application/json')->post(self::baseUrl, [
+            'name' => $test_user->name,
+            'email' => $test_user->email,
+        ]);
+
+        $response->assertStatus(201)->assertValid(['name', 'email'])->assertJson(fn (AssertableJson $json) =>
+        $json->has('data', fn (AssertableJson $json) =>
+        $json->where('type', 'users')
+             ->has('id')
+             ->has('attributes', fn (AssertableJson $json) =>
+            $json->where('name', $test_user->name)
+                 ->where('email', $test_user->email))));
+    }
 }
