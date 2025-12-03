@@ -114,4 +114,12 @@ class TaskControllerTest extends TestCase
                 )
             ));
     }
+
+    public function test_delete_task(){
+        $task = Task::factory()->for(Category::factory()->create())->create();
+
+        $response = $this->deleteJson(self::baseUrl.'/'.$task->id);
+
+        $response->assertStatus(200);
+    }
 }
