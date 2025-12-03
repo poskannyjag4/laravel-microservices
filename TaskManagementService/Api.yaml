@@ -1,0 +1,456 @@
+openapi: 3.0.3
+info:
+  title: Task Management Service API
+  description: API управления задачами.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/V1
+    description: Local Server
+
+paths:
+  /tasks:
+    get:
+      summary: Получить список задач
+      tags: [Tasks]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Номер страницы
+      responses:
+        '200':
+          description: Список Задач с пагинацией
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskCollectionResponse'
+
+    post:
+      summary: Создать Задачу
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskSingleResponse'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskSingleResponse'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tasks/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID задачи
+
+    get:
+      summary: Получить одну задачу
+      tags: [Tasks]
+      responses:
+        '200':
+          description: Данные задачи
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskSingleResponse'
+        '404':
+          description: Задача не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Обновить задачу
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdateRequest'
+      responses:
+        '200':
+          description: Задача обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskSingleResponse'
+        '404':
+          description: Не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Ошибка валидации
+
+    delete:
+      summary: Удалить задачу
+      tags: [Tasks]
+      responses:
+        '200':
+          description: Задача удален
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        '404':
+          description: Не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /categories:
+    get:
+      summary: Получить список категорий
+      tags: [Categories]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Номер страницы
+      responses:
+        '200':
+          description: Список категорий с пагинацией
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCollectionResponse'
+
+    post:
+      summary: Создать категорию
+      tags: [Categories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategorySingleResponse'
+      responses:
+        '201':
+          description: Категория создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySingleResponse'
+        '422':
+          description: Ошибка валидации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /categories/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID задачи
+
+    get:
+      summary: Получить одну категорию
+      tags: [Categories]
+      responses:
+        '200':
+          description: Данные категории
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySingleResponse'
+        '404':
+          description: категория не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Обновить категорию
+      tags: [Categories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdateRequest'
+      responses:
+        '200':
+          description: Категория обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySingleResponse'
+        '404':
+          description: Не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Ошибка валидации
+
+    delete:
+      summary: Удалить категорию
+      tags: [Categories]
+      responses:
+        '200':
+          description: Категория удален
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        '404':
+          description: Не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+  schemas:
+    CategoryAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Work"
+          description: "Название категории"
+
+    TaskAttributes:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Fix production bug"
+        description:
+          type: string
+          nullable: true
+          example: "Critical error in payment gateway"
+        status:
+          type: boolean
+          example: "true"
+
+    CategoryResource:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "categories"
+          enum: ["categories"]
+        id:
+          type: integer
+          example: 1
+        attributes:
+          $ref: '#/components/schemas/CategoryAttributes'
+        includes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResource'
+      required:
+        - type
+        - id
+        - attributes
+
+    TaskResource:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "tasks"
+          enum: ["tasks"]
+        id:
+          type: integer
+          example: 105
+        attributes:
+          $ref: '#/components/schemas/TaskAttributes'
+        relationships:
+          type: object
+          properties:
+            author:
+              $ref: '#/components/schemas/RelationshipLink'
+            category:
+              $ref: '#/components/schemas/RelationshipLink'
+      required:
+        - type
+        - id
+        - attributes
+
+    RelationshipLink:
+      type: object
+      properties:
+        related:
+          type: string
+          format: uri
+          description: "Ссылка на ресурс"
+          example: "http://localhost:8000/api/V1/users/5"
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "users"
+            id:
+              type: integer
+              example: 5
+
+    CategorySingleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CategoryResource'
+
+
+    CategoryCollectionResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryResource'
+        links:
+          type: object
+          properties:
+            first: { type: string, nullable: true }
+            last: { type: string, nullable: true }
+            prev: { type: string, nullable: true }
+            next: { type: string, nullable: true }
+        meta:
+          type: object
+          properties:
+            current_page: { type: integer }
+            from: { type: integer, nullable: true }
+            last_page: { type: integer }
+            path: { type: string }
+            per_page: { type: integer }
+            to: { type: integer, nullable: true }
+            total: { type: integer }
+
+    TaskSingleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TaskResource'
+
+
+    TaskCollectionResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResource'
+        links:
+          type: object
+          properties:
+            first: { type: string, nullable: true }
+            last: { type: string, nullable: true }
+            prev: { type: string, nullable: true }
+            next: { type: string, nullable: true }
+        meta:
+          type: object
+          properties:
+            current_page: { type: integer }
+            from: { type: integer, nullable: true }
+            last_page: { type: integer }
+            path: { type: string }
+            per_page: { type: integer }
+            to: { type: integer, nullable: true }
+            total: { type: integer }
+
+    TaskCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+      required:
+        - title
+        - description
+        - user_id
+        - category_id
+
+    TaskUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+
+    CategoryCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+
+      required:
+        - name
+
+    CategoryUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Что-то пошло не так. Попробуйте позже."
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The email has already been taken."
+        errors:
+          type: array
+          example: ["email": "The email already taken"]
