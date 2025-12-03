@@ -35,4 +35,21 @@ class ExampleTest extends TestCase
                 ->hasAll(['links', 'meta'])
             );
     }
+
+    public function test_show_user_returns_user_data(){
+        $user = User::factory()->create();
+
+        $response = $this->withHeader('Accept', 'application/json')->get(self::baseUrl . '/' . $user->id);
+
+        $response->assertStatus(200)
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->has('data', fn (AssertableJson $json) =>
+                    $json->where('type', 'users')
+                         ->where('id', $user->id)
+                         ->has('attributes', fn (AssertableJson $json) =>
+                            $json->where('name', $user->name)
+                                 ->where('email', $user->email))));
+    }
+
+
 }
