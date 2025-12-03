@@ -100,4 +100,14 @@ class CategoryControllerTest extends TestCase
                 )
             ));
     }
+
+    public function test_create_category_with_invalid_data(){
+        $create_data = [
+            'name' => '',
+        ];
+
+        $response = $this->postJson(self::baseUrl, $create_data);
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['name']);
+    }
 }
