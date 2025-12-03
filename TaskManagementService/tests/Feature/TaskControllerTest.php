@@ -53,4 +53,28 @@ class TaskControllerTest extends TestCase
                 )
             ));
     }
+
+    public function test_create_task_with_valid_data()
+    {
+        $category = Category::factory()->create();
+        $create_data = [
+            'title' => 'test_title',
+            'description' => 'test_description',
+            'category_id' => $category->id,
+            'user_id' => 1,
+        ];
+
+        $response = $this->postJson(self::baseUrl, $create_data);
+
+        $response->assertStatus(201)->assertJson(fn (AssertableJson $json) => $json
+            ->has('data', fn (AssertableJson $json) => $json->where('type', 'tasks')
+                ->has('id')
+                ->has('attributes', fn (AssertableJson $json) => $json->where('title', $create_data['title'])
+                    ->where('description', $create_data['description'])
+                    ->where('status', null)
+                )
+                ->has('relationships', fn (AssertableJson $json) => $json->hasAll(['author', 'category'])
+                )
+            ))->assertJsonPath('data.relationships.author.data.id', $create_data['user_id'])->assertJsonPath('data.relationships.category.data.id', $category->id);
+    }
 }
