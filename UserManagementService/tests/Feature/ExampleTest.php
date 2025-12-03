@@ -70,4 +70,18 @@ class ExampleTest extends TestCase
             $json->where('name', $test_user->name)
                  ->where('email', $test_user->email))));
     }
+
+    public function test_create_new_user_with_invalid_data(){
+        $test_user = new User([
+            'name' => '',
+            'email' => 'test_email',
+        ]);
+
+        $response = $this->withHeader('Accept', 'application/json')->post(self::baseUrl, [
+            'name' => $test_user->name,
+            'email' => $test_user->email,
+        ]);
+
+        $response->assertStatus(422)->assertInvalid(['name', 'email']);
+    }
 }
