@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Category;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -30,5 +31,23 @@ class CategoryControllerTest extends TestCase
                 )
                 ->hasAll(['links', 'meta'])
             );
+    }
+
+    public function test_index_with_include(){
+        Category::factory()->count(15)->has(Task::factory()->count(2))->create();
+
+        $response = $this->getJson(self::baseUrl . '?includeTasks');
+
+        $response->assertStatus(200)->assertJson(fn (AssertableJson $json) => $json->has('data', 10)
+            ->has('data.0', fn (AssertableJson $json) =>
+            $json->where('type', 'categories')
+                ->has('id')
+                ->whereType('includes', 'array')
+                ->has('attributes', fn (AssertableJson $json) =>
+                $json->whereType('name', 'string')
+                )
+            )
+            ->hasAll(['links', 'meta'])
+        );
     }
 }
