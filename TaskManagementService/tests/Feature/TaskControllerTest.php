@@ -92,4 +92,26 @@ class TaskControllerTest extends TestCase
 
         $response->assertStatus(422)->assertInvalid(['title', 'category_id', 'user_id']);
     }
+
+    public function test_update_task()
+    {
+        $task = Task::factory()->for(Category::factory()->create())->create();
+        $update_data = [
+            'title' => 'updated_title',
+            'description' => 'updated_description',
+        ];
+
+        $response = $this->patchJson(self::baseUrl.'/'.$task->id, $update_data);
+
+        $response->assertStatus(200)->assertJson(fn (AssertableJson $json) => $json
+            ->has('data', fn (AssertableJson $json) => $json->where('type', 'tasks')
+                ->has('id')
+                ->has('attributes', fn (AssertableJson $json) => $json->where('title', $update_data['title'])
+                    ->where('description', $update_data['description'])
+                    ->etc()
+                )
+                ->has('relationships', fn (AssertableJson $json) => $json->hasAll(['author', 'category'])
+                )
+            ));
+    }
 }
