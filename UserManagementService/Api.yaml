@@ -1,11 +1,11 @@
 openapi: 3.0.3
 info:
-  title: User Service API (Laravel)
+  title: User Management Service API
   description: API управления пользователями.
   version: 1.0.0
 
 servers:
-  - url: http://localhost:8000/api
+  - url: http://localhost:8000/api/V1
     description: Local Server
 
 paths:
@@ -128,7 +128,7 @@ paths:
 
 components:
   schemas:
-    # --- Структура ресурса (Attributes) ---
+
     UserAttributes:
       type: object
       properties:
@@ -140,7 +140,7 @@ components:
           format: email
           example: "ivan@example.com"
 
-    # --- Полный объект ресурса (JSON:API Style) ---
+
     UserResource:
       type: object
       properties:
@@ -148,19 +148,19 @@ components:
           type: string
           example: "users"
         id:
-          type: string # Или integer, зависит от БД, но в JSON:API id всегда строка
+          type: string
           example: "1"
         attributes:
           $ref: '#/components/schemas/UserAttributes'
 
-    # --- Ответ для одного объекта (Laravel Resource wrap in 'data') ---
+
     UserSingleResponse:
       type: object
       properties:
         data:
           $ref: '#/components/schemas/UserResource'
 
-    # --- Ответ для списка (Laravel Collection) ---
+
     UserCollectionResponse:
       type: object
       properties:
@@ -186,7 +186,6 @@ components:
             to: { type: integer, nullable: true }
             total: { type: integer }
 
-    # --- Тела запросов (Request Body) ---
     UserCreateRequest:
       type: object
       properties:
@@ -195,8 +194,6 @@ components:
         email:
           type: string
           format: email
-        password:
-          type: string # Предполагаю, что при создании нужен пароль?
       required:
         - name
         - email
@@ -209,19 +206,20 @@ components:
         email:
           type: string
           format: email
-      # В update обычно поля не required, так как можно обновить только часть
 
-    # --- Ошибки ---
     ErrorResponse:
       type: object
       properties:
         error:
           type: string
-          example: "Пользователя с id 99 не существует"
+          example: "Что-то пошло не так. Попробуйте позже."
 
     ValidationErrorResponse:
       type: object
       properties:
-        error:
+        message:
           type: string
           example: "The email has already been taken."
+        errors:
+          type: array
+          example: ["email": "The email already taken"]
