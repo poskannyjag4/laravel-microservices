@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\UserCreated;
-use Exception;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -27,10 +26,6 @@ class NotifyServices
         //
     }
 
-    /**
-     * @param UserCreated $event
-     * @return void
-     */
     public function handle(UserCreated $event): void
     {
         $connection = new AMQPStreamConnection(self::HOST, self::PORT, self::USER, self::PASS);

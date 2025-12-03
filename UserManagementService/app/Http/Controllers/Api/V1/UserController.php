@@ -20,19 +20,11 @@ class UserController extends Controller
         protected UserRepository $repository,
     ) {}
 
-    /**
-     * @param UserGetrequest $request
-     * @return AnonymousResourceCollection
-     */
     public function index(UserGetrequest $request): AnonymousResourceCollection
     {
         return UserResource::collection($this->repository->paginate(10));
     }
 
-    /**
-     * @param UserPostRequest $request
-     * @return JsonResponse|UserResource
-     */
     public function store(UserPostRequest $request): JsonResponse|UserResource
     {
         try {
@@ -52,10 +44,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * @param string $id
-     * @return JsonResponse|UserResource
-     */
     public function show(string $id): JsonResponse|UserResource
     {
         try {
@@ -68,16 +56,12 @@ class UserController extends Controller
 
     }
 
-    /**
-     * @param UserUpdateRequest $request
-     * @param string $id
-     * @return JsonResponse|UserResource
-     */
     public function update(UserUpdateRequest $request, string $id): JsonResponse|UserResource
     {
         try {
             $userData = $request->validated();
             $this->repository->update($userData, $id);
+
             return new UserResource($this->repository->find($id));
         } catch (ValidatorException $e) {
             return response()->json([
@@ -91,10 +75,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * @param string $id
-     * @return JsonResponse
-     */
     public function destroy(string $id): JsonResponse
     {
         try {
