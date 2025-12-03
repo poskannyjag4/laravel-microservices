@@ -18,7 +18,7 @@ class ExampleTest extends TestCase
     {
         User::factory()->count(15)->create();
 
-        $response = $this->withHeader('Accept', 'application/json')->get(self::baseUrl);
+        $response = $this->getJson(self::baseUrl);
 
         $response
             ->assertStatus(200)
@@ -39,7 +39,7 @@ class ExampleTest extends TestCase
     public function test_show_user_returns_user_data(){
         $user = User::factory()->create();
 
-        $response = $this->withHeader('Accept', 'application/json')->get(self::baseUrl . '/' . $user->id);
+        $response = $this->getJson(self::baseUrl . '/' . $user->id);
 
         $response->assertStatus(200)
             ->assertJson(fn (AssertableJson $json) =>
@@ -52,36 +52,48 @@ class ExampleTest extends TestCase
     }
 
     public function test_create_new_user_with_valid_data(){
-        $test_user = new User([
+        $test_user = [
             'name' => 'test_name',
             'email' => 'test_email@mail.com',
-        ]);
+        ];
 
-        $response = $this->withHeader('Accept', 'application/json')->post(self::baseUrl, [
-            'name' => $test_user->name,
-            'email' => $test_user->email,
-        ]);
+        $response = $this->postJson(self::baseUrl, $test_user);
 
         $response->assertStatus(201)->assertValid(['name', 'email'])->assertJson(fn (AssertableJson $json) =>
         $json->has('data', fn (AssertableJson $json) =>
         $json->where('type', 'users')
              ->has('id')
              ->has('attributes', fn (AssertableJson $json) =>
-            $json->where('name', $test_user->name)
-                 ->where('email', $test_user->email))));
+            $json->where('name', $test_user['name'])
+                 ->where('email', $test_user['email']))));
     }
 
     public function test_create_new_user_with_invalid_data(){
-        $test_user = new User([
+        $test_user = [
             'name' => '',
             'email' => 'test_email',
-        ]);
+        ];
 
-        $response = $this->withHeader('Accept', 'application/json')->post(self::baseUrl, [
-            'name' => $test_user->name,
-            'email' => $test_user->email,
-        ]);
+        $response = $this->postJson(self::baseUrl, $test_user);
 
         $response->assertStatus(422)->assertInvalid(['name', 'email']);
+    }
+
+    public function test_update_user_with_valid_data(){
+        $user = User::factory()->create();
+        $update_data = [
+            'name' => 'updated_name',
+        ];
+
+        $response = $this->patchJson(self::baseUrl . '/' . $user->id, $update_data);
+
+        $response->assertStatus(200)->assertJson(fn (AssertableJson $json) =>
+        $json->has('data', fn (AssertableJson $json) =>
+        $json->where('type', 'users')
+            ->where('id', $user->id)
+            ->has('attributes', fn (AssertableJson $json) =>
+            $json->where('name', $update_data['name'])
+                ->where('email', $user->email))));
+
     }
 }
