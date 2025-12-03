@@ -50,4 +50,19 @@ class CategoryControllerTest extends TestCase
             ->hasAll(['links', 'meta'])
         );
     }
+
+    public function test_show_returns_category(){
+        $category = Category::factory()->create();
+
+        $response = $this->getJson(self::baseUrl . '/' . $category->id);
+
+        $response->assertStatus(200)->assertJson(fn (AssertableJson $json) => $json->has('data')
+            ->has('data', fn (AssertableJson $json) =>
+            $json->where('type', 'categories')
+                ->has('id')
+                ->has('attributes', fn (AssertableJson $json) =>
+                $json->whereType('name', 'string')
+                )
+            ));
+    }
 }
