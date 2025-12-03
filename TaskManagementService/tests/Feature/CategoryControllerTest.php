@@ -65,4 +65,22 @@ class CategoryControllerTest extends TestCase
                 )
             ));
     }
+
+    public function test_update_category_with_valid_data(){
+        $category = Category::factory()->create();
+        $update_data = [
+            'name' => 'updated_name',
+        ];
+
+        $response = $this->patchJson(self::baseUrl . '/' . $category->id, $update_data);
+
+        $response->assertStatus(200)->assertValid()->assertJson(fn (AssertableJson $json) => $json->has('data')
+            ->has('data', fn (AssertableJson $json) =>
+            $json->where('type', 'categories')
+                ->has('id')
+                ->has('attributes', fn (AssertableJson $json) =>
+                $json->whereType('name', 'string')
+                )
+            ));
+    }
 }
