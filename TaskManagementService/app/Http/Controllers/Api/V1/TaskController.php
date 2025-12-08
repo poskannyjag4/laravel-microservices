@@ -7,6 +7,7 @@ use App\Http\Requests\V1\Task\TaskPostRequest;
 use App\Http\Requests\V1\Task\TaskUpdateRequest;
 use App\Http\Resources\V1\TaskResource;
 use App\Repositories\V1\TaskRepository;
+use App\Services\V1\TaskService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,12 +16,12 @@ use Prettus\Validator\Exceptions\ValidatorException;
 class TaskController extends Controller
 {
     public function __construct(
-        protected TaskRepository $repository,
+        protected TaskService $taskService,
     ) {}
 
     public function index(): AnonymousResourceCollection
     {
-        return TaskResource::collection($this->repository->paginate(10));
+        return TaskResource::collection($this->taskService->getPaginatedTasks(10));
     }
 
     public function store(TaskPostRequest $request): JsonResponse|TaskResource
