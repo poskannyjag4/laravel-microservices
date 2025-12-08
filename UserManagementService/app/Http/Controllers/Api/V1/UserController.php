@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Dtos\V1\UserPostRequestDto;
-use App\Events\UserCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UserGetrequest;
 use App\Http\Requests\V1\UserPostRequest;
@@ -29,11 +28,10 @@ class UserController extends Controller
     /**
      * @throws ValidatorException
      */
-    public function store(UserPostRequest $request): JsonResponse|UserResource
+    public function store(UserPostRequest $request): UserResource
     {
         $userData = UserPostRequestDto::from($request->validated());
         $user = $this->userService->createUser($userData);
-        UserCreated::dispatch($user);
 
         return new UserResource($user);
 
@@ -41,14 +39,7 @@ class UserController extends Controller
 
     public function show(string $id): JsonResponse|UserResource
     {
-        try {
-            return new UserResource($this->repository->find($id));
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Пользователя с id {$id} не существует',
-            ], 404);
-        }
-
+        return new UserResource($this->userService->getUser($id));
     }
 
     public function update(UserUpdateRequest $request, string $id): JsonResponse|UserResource

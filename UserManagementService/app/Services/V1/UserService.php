@@ -2,6 +2,7 @@
 
 namespace App\Services\V1;
 
+use App\Dtos\V1\UserDto;
 use App\Dtos\V1\UserPostRequestDto;
 use App\Events\UserCreated;
 use App\Models\User;
@@ -27,7 +28,7 @@ class UserService
     /**
      * @throws ValidatorException
      */
-    public function createUser(UserPostRequestDto $data): User
+    public function createUser(UserPostRequestDto $data): UserDto
     {
         $user = $this->userRepository->create([
             'name' => $data->name,
@@ -36,6 +37,11 @@ class UserService
 
         UserCreated::dispatch($user);
 
-        return $user;
+        return UserDto::from($user);
+    }
+
+    public function getUser(int $id): UserDto
+    {
+        return UserDto::from($this->userRepository->find($id));
     }
 }

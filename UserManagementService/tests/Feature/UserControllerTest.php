@@ -23,11 +23,9 @@ class UserControllerTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson(fn (AssertableJson $json) => $json->has('data', 10)
-                ->has('data.0', fn (AssertableJson $json) =>
-                $json->where('type', 'users')
+                ->has('data.0', fn (AssertableJson $json) => $json->where('type', 'users')
                     ->has('id')
-                    ->has('attributes', fn (AssertableJson $json) =>
-                    $json->hasAll(['name', 'email'])
+                    ->has('attributes', fn (AssertableJson $json) => $json->hasAll(['name', 'email'])
                         ->whereType('name', 'string')
                         ->whereType('email', 'string')
                     )
@@ -36,22 +34,21 @@ class UserControllerTest extends TestCase
             );
     }
 
-    public function test_show_user_returns_user_data(){
+    public function test_show_user_returns_user_data()
+    {
         $user = User::factory()->create();
 
-        $response = $this->getJson(self::baseUrl . '/' . $user->id);
+        $response = $this->getJson(self::baseUrl.'/'.$user->id);
 
         $response->assertStatus(200)
-            ->assertJson(fn (AssertableJson $json) =>
-                $json->has('data', fn (AssertableJson $json) =>
-                    $json->where('type', 'users')
-                         ->where('id', $user->id)
-                         ->has('attributes', fn (AssertableJson $json) =>
-                            $json->where('name', $user->name)
-                                 ->where('email', $user->email))));
+            ->assertJson(fn (AssertableJson $json) => $json->has('data', fn (AssertableJson $json) => $json->where('type', 'users')
+                ->where('id', $user->id)
+                ->has('attributes', fn (AssertableJson $json) => $json->where('name', $user->name)
+                    ->where('email', $user->email))));
     }
 
-    public function test_create_new_user_with_valid_data(){
+    public function test_create_new_user_with_valid_data()
+    {
         $test_user = [
             'name' => 'test_name',
             'email' => 'test_email@mail.com',
@@ -59,16 +56,14 @@ class UserControllerTest extends TestCase
 
         $response = $this->postJson(self::baseUrl, $test_user);
 
-        $response->assertStatus(201)->assertValid(['name', 'email'])->assertJson(fn (AssertableJson $json) =>
-        $json->has('data', fn (AssertableJson $json) =>
-        $json->where('type', 'users')
-             ->has('id')
-             ->has('attributes', fn (AssertableJson $json) =>
-            $json->where('name', $test_user['name'])
-                 ->where('email', $test_user['email']))));
+        $response->assertStatus(201)->assertValid(['name', 'email'])->assertJson(fn (AssertableJson $json) => $json->has('data', fn (AssertableJson $json) => $json->where('type', 'users')
+            ->has('id')
+            ->has('attributes', fn (AssertableJson $json) => $json->where('name', $test_user['name'])
+                ->where('email', $test_user['email']))));
     }
 
-    public function test_create_new_user_with_invalid_data(){
+    public function test_create_new_user_with_invalid_data()
+    {
         $test_user = [
             'name' => '',
             'email' => 'test_email',
@@ -79,28 +74,27 @@ class UserControllerTest extends TestCase
         $response->assertStatus(422)->assertInvalid(['name', 'email']);
     }
 
-    public function test_update_user_with_valid_data(){
+    public function test_update_user_with_valid_data()
+    {
         $user = User::factory()->create();
         $update_data = [
             'name' => 'updated_name',
         ];
 
-        $response = $this->patchJson(self::baseUrl . '/' . $user->id, $update_data);
+        $response = $this->patchJson(self::baseUrl.'/'.$user->id, $update_data);
 
-        $response->assertStatus(200)->assertValid()->assertJson(fn (AssertableJson $json) =>
-        $json->has('data', fn (AssertableJson $json) =>
-        $json->where('type', 'users')
+        $response->assertStatus(200)->assertValid()->assertJson(fn (AssertableJson $json) => $json->has('data', fn (AssertableJson $json) => $json->where('type', 'users')
             ->where('id', $user->id)
-            ->has('attributes', fn (AssertableJson $json) =>
-            $json->where('name', $update_data['name'])
+            ->has('attributes', fn (AssertableJson $json) => $json->where('name', $update_data['name'])
                 ->where('email', $user->email))));
 
     }
 
-    public function test_delete_user(){
+    public function test_delete_user()
+    {
         $user = User::factory()->create();
 
-        $response = $this->deleteJson(self::baseUrl . '/' . $user->id);
+        $response = $this->deleteJson(self::baseUrl.'/'.$user->id);
 
         $response->assertStatus(200);
 
