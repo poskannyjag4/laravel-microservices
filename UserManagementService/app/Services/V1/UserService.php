@@ -49,9 +49,14 @@ class UserService
     {
         $user = $this->userRepository->update([
             'name' => $data->name,
-            'email' => $data->email
+            'email' => $data->email,
         ], $id);
 
         return UserDto::from($user);
+    }
+
+    public function deleteUser(int $id): int
+    {
+        return $this->userRepository->delete($id);
     }
 }

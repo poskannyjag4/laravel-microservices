@@ -6,12 +6,9 @@ use Spatie\LaravelData\Dto;
 
 class UserUpdateRequestDto extends Dto
 {
-    function __construct(
+    public function __construct(
         public string $id,
         public string $name,
         public string $email,
-    )
-    {
-
-    }
+    ) {}
 }
