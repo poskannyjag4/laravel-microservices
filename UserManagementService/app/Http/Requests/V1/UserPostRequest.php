@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\V1;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UserPostRequest extends FormRequest
@@ -18,7 +17,7 @@ class UserPostRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array|string>
+     * @return string[]
      */
     public function rules(): array
     {

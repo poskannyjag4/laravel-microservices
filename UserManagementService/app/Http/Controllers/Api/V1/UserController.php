@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Dtos\V1\UserPostRequestDto;
 use App\Events\UserCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UserGetrequest;
 use App\Http\Requests\V1\UserPostRequest;
 use App\Http\Requests\V1\UserUpdateRequest;
 use App\Http\Resources\V1\UserResource;
-use App\Repositories\V1\UserRepository;
 use App\Services\V1\UserService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -26,23 +26,17 @@ class UserController extends Controller
         return UserResource::collection($this->userService->getPaginatedUsers());
     }
 
+    /**
+     * @throws ValidatorException
+     */
     public function store(UserPostRequest $request): JsonResponse|UserResource
     {
-        try {
-            $userData = $request->validated();
-            $user = $this->repository->create($userData);
-            UserCreated::dispatch($user);
+        $userData = UserPostRequestDto::from($request->validated());
+        $user = $this->userService->createUser($userData);
+        UserCreated::dispatch($user);
 
-            return new UserResource($user);
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return new UserResource($user);
+
     }
 
     public function show(string $id): JsonResponse|UserResource
