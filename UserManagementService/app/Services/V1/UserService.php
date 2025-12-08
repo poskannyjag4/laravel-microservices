@@ -3,7 +3,7 @@
 namespace App\Services\V1;
 
 use App\Dtos\V1\UserDto;
-use App\Dtos\V1\UserPostRequestDto;
+use App\Dtos\V1\UserRequestDto;
 use App\Events\UserCreated;
 use App\Models\User;
 use App\Repositories\V1\UserRepository;
@@ -28,7 +28,7 @@ class UserService
     /**
      * @throws ValidatorException
      */
-    public function createUser(UserPostRequestDto $data): UserDto
+    public function createUser(UserRequestDto $data): UserDto
     {
         $user = $this->userRepository->create([
             'name' => $data->name,
@@ -43,5 +43,15 @@ class UserService
     public function getUser(int $id): UserDto
     {
         return UserDto::from($this->userRepository->find($id));
+    }
+
+    public function updateUser(UserRequestDto $data, int $id): UserDto
+    {
+        $user = $this->userRepository->update([
+            'name' => $data->name,
+            'email' => $data->email
+        ], $id);
+
+        return UserDto::from($user);
     }
 }

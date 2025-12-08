@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Dtos\V1\UserPostRequestDto;
+use App\Dtos\V1\UserRequestDto;
+use App\Dtos\V1\UserUpdateRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UserGetrequest;
 use App\Http\Requests\V1\UserPostRequest;
@@ -30,7 +31,7 @@ class UserController extends Controller
      */
     public function store(UserPostRequest $request): UserResource
     {
-        $userData = UserPostRequestDto::from($request->validated());
+        $userData = UserRequestDto::from($request->validated());
         $user = $this->userService->createUser($userData);
 
         return new UserResource($user);
@@ -42,23 +43,10 @@ class UserController extends Controller
         return new UserResource($this->userService->getUser($id));
     }
 
-    public function update(UserUpdateRequest $request, string $id): JsonResponse|UserResource
+    public function update(UserUpdateRequest $request, int $id): JsonResponse|UserResource
     {
-        try {
-            $userData = $request->validated();
-            $this->repository->update($userData, $id);
-
-            return new UserResource($this->repository->find($id));
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => 'Пользователя с id {$id} не существует',
-            ], 404);
-        }
-
+            $userData = UserRequestDto::from($request->validated());
+            return new UserResource($this->userService->updateUser($userData, $id));
     }
 
     public function destroy(string $id): JsonResponse
