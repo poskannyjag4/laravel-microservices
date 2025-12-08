@@ -9,6 +9,7 @@ use App\Http\Requests\V1\UserPostRequest;
 use App\Http\Requests\V1\UserUpdateRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Repositories\V1\UserRepository;
+use App\Services\V1\UserService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -17,12 +18,12 @@ use Prettus\Validator\Exceptions\ValidatorException;
 class UserController extends Controller
 {
     public function __construct(
-        protected UserRepository $repository,
+        protected UserService $userService
     ) {}
 
     public function index(UserGetrequest $request): AnonymousResourceCollection
     {
-        return UserResource::collection($this->repository->paginate(10));
+        return UserResource::collection($this->userService->getPaginatedUsers());
     }
 
     public function store(UserPostRequest $request): JsonResponse|UserResource
