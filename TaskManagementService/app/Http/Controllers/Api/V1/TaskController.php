@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Dtos\V1\TaskPatchRequestDto;
-use App\Dtos\V1\TaskPostRequestDto;
+use App\Dtos\V1\Tasks\TaskPatchRequestDto;
+use App\Dtos\V1\Tasks\TaskPostRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Task\TaskPostRequest;
 use App\Http\Requests\V1\Task\TaskUpdateRequest;

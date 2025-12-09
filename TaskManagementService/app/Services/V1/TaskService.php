@@ -2,9 +2,9 @@
 
 namespace App\Services\V1;
 
-use App\Dtos\V1\TaskDto;
-use App\Dtos\V1\TaskPatchRequestDto;
-use App\Dtos\V1\TaskPostRequestDto;
+use App\Dtos\V1\Tasks\TaskDto;
+use App\Dtos\V1\Tasks\TaskPatchRequestDto;
+use App\Dtos\V1\Tasks\TaskPostRequestDto;
 use App\Models\Task;
 use App\Repositories\V1\TaskRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
