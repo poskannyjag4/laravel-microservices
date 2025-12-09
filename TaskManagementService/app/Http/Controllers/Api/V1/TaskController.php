@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Dtos\V1\TaskPatchRequestDto;
+use App\Dtos\V1\TaskPostRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Task\TaskPostRequest;
 use App\Http\Requests\V1\Task\TaskUpdateRequest;
 use App\Http\Resources\V1\TaskResource;
-use App\Repositories\V1\TaskRepository;
 use App\Services\V1\TaskService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 class TaskController extends Controller
 {
@@ -21,71 +20,31 @@ class TaskController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return TaskResource::collection($this->taskService->getPaginatedTasks(10));
+        return TaskResource::collection($this->taskService->getPaginatedTasks());
     }
 
-    public function store(TaskPostRequest $request): JsonResponse|TaskResource
+    public function store(TaskPostRequest $request): TaskResource
     {
-        try {
-            $taskData = $request->validated();
+        $taskData = TaskPostRequestDto::from($request->validated());
 
-            return new TaskResource($this->repository->create($taskData));
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-
+        return new TaskResource($this->taskService->createTask($taskData));
     }
 
-    public function show(string $id): JsonResponse|TaskResource
+    public function show(int $id): TaskResource
     {
-        try {
-            return new TaskResource($this->repository->find($id));
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Задачи с id {$id} не существует",
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-
+        return new TaskResource($this->taskService->getTask($id));
     }
 
-    public function update(TaskUpdateRequest $request, string $id): JsonResponse|TaskResource
+    public function update(TaskUpdateRequest $request, int $id): JsonResponse|TaskResource
     {
 
         $taskData = $request->validated();
-        try {
-            $this->repository->update($taskData, $id);
 
-            return new TaskResource($this->repository->find($id));
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Задачи с id {$id} не существует",
-            ], 404);
-        }
-
+        return new TaskResource($this->taskService->updateTask(TaskPatchRequestDto::from($taskData), $id));
     }
 
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try {
-            return response()->json($this->repository->delete($id), 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Задачи с id {$id} не существует",
-            ], 404);
-        }
+        return response()->json($this->taskService->deleteTask($id), 200);
     }
 }
