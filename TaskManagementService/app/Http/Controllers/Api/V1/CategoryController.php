@@ -7,7 +7,6 @@ use App\Http\Requests\V1\Category\CategoryGetRequest;
 use App\Http\Requests\V1\Category\CategoryPostRequest;
 use App\Http\Requests\V1\Category\CategoryUpdateRequest;
 use App\Http\Resources\V1\CategoryResource;
-use App\Repositories\V1\CategoryRepository;
 use App\Services\V1\CategoryService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +16,7 @@ use Prettus\Validator\Exceptions\ValidatorException;
 class CategoryController extends Controller
 {
     public function __construct(
-        protected CategoryService  $categoryService,
+        protected CategoryService $categoryService,
     ) {}
 
     public function index(CategoryGetRequest $request): AnonymousResourceCollection
@@ -27,19 +26,9 @@ class CategoryController extends Controller
 
     public function store(CategoryPostRequest $request): JsonResponse|CategoryResource
     {
-        try {
-            $taskData = $request->validated();
+        $taskData = $request->validated();
 
-            return new CategoryResource($this->repository->create($taskData));
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return new CategoryResource($this->categoryService->createCategory($taskData));
     }
 
     public function show(CategoryGetRequest $request, string $id): JsonResponse|CategoryResource
