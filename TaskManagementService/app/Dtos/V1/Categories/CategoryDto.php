@@ -10,9 +10,7 @@ use Spatie\LaravelData\Optional;
 class CategoryDto extends Dto
 {
     /**
-     * @param int $id
-     * @param string $name
-     * @param Collection<int, Task>|Optional $tasks
+     * @param  Collection<int, Task>|Optional  $tasks
      */
     public function __construct(
         public int $id,

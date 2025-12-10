@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Dtos\V1\Categories\CategoryPatchRequestDto;
 use App\Dtos\V1\Categories\CategoryPostRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Category\CategoryGetRequest;
@@ -9,10 +10,8 @@ use App\Http\Requests\V1\Category\CategoryPostRequest;
 use App\Http\Requests\V1\Category\CategoryUpdateRequest;
 use App\Http\Resources\V1\CategoryResource;
 use App\Services\V1\CategoryService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Prettus\Validator\Exceptions\ValidatorException;
 
 class CategoryController extends Controller
 {
@@ -25,47 +24,32 @@ class CategoryController extends Controller
         return CategoryResource::collection($this->categoryService->getPaginatedCategories($request->getIncludes()));
     }
 
-    public function store(CategoryPostRequest $request): JsonResponse|CategoryResource
+    public function store(CategoryPostRequest $request): CategoryResource
     {
         $taskData = CategoryPostRequestDto::from($request->validated());
 
         return new CategoryResource($this->categoryService->createCategory($taskData));
     }
 
-    public function show(CategoryGetRequest $request, int $id): JsonResponse|CategoryResource
+    public function show(CategoryGetRequest $request, int $id): CategoryResource
     {
 
         return new CategoryResource($this->categoryService->getCategory($id, $request->getIncludes()));
 
     }
 
-    public function update(CategoryUpdateRequest $request, string $id): JsonResponse|CategoryResource
+    public function update(CategoryUpdateRequest $request, int $id): CategoryResource
     {
 
-        $taskData = $request->validated();
-        try {
-            $this->repository->update($taskData, $id);
+        $taskData = CategoryPatchRequestDto::from($request->validated());
 
-            return new CategoryResource($this->repository->find($id));
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 422);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Категории с id {$id} не существует",
-            ], 404);
-        }
+        return new CategoryResource($this->categoryService->updateCategory($taskData, $id));
+
     }
 
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try {
-            return response()->json($this->repository->delete($id), 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Категории с id {$id} не существует",
-            ], 404);
-        }
+        return response()->json($this->categoryService->deleteCategory($id), 200);
+
     }
 }

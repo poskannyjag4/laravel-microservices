@@ -6,7 +6,6 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
-use Spatie\LaravelData\Optional;
 
 /**
  * @mixin Category
@@ -28,7 +27,7 @@ class CategoryResource extends JsonResource
             ],
             'includes' => $this->when(
                 $this->tasks instanceof Collection,
-                fn() => TaskResource::collection($this->tasks)
+                fn () => TaskResource::collection($this->tasks)
             ),
         ];
     }

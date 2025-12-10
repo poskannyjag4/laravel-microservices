@@ -3,6 +3,7 @@
 namespace App\Services\V1;
 
 use App\Dtos\V1\Categories\CategoryDto;
+use App\Dtos\V1\Categories\CategoryPatchRequestDto;
 use App\Dtos\V1\Categories\CategoryPostRequestDto;
 use App\Models\Category;
 use App\Repositories\V1\CategoryRepository;
@@ -35,5 +36,19 @@ class CategoryService
     public function getCategory(int $id, array $includes): CategoryDto
     {
         return CategoryDto::from($this->categoryRepository->with($includes)->find($id));
+    }
+
+    public function updateCategory(CategoryPatchRequestDto $data, int $id): CategoryDto
+    {
+        $category = $this->categoryRepository->update([
+            'name' => $data->name,
+        ], $id);
+
+        return CategoryDto::from($category);
+    }
+
+    public function deleteCategory(int $id): int
+    {
+        return $this->categoryRepository->delete($id);
     }
 }
