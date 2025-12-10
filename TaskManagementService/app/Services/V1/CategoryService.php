@@ -30,6 +30,10 @@ class CategoryService
         ]);
 
         return CategoryDto::from($category);
+    }
 
+    public function getCategory(int $id, array $includes): CategoryDto
+    {
+        return CategoryDto::from($this->categoryRepository->with($includes)->find($id));
     }
 }

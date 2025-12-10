@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Dtos\V1\Categories\CategoryPostRequestDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Category\CategoryGetRequest;
 use App\Http\Requests\V1\Category\CategoryPostRequest;
@@ -26,24 +27,16 @@ class CategoryController extends Controller
 
     public function store(CategoryPostRequest $request): JsonResponse|CategoryResource
     {
-        $taskData = $request->validated();
+        $taskData = CategoryPostRequestDto::from($request->validated());
 
         return new CategoryResource($this->categoryService->createCategory($taskData));
     }
 
-    public function show(CategoryGetRequest $request, string $id): JsonResponse|CategoryResource
+    public function show(CategoryGetRequest $request, int $id): JsonResponse|CategoryResource
     {
-        try {
-            return new CategoryResource($this->repository->with($request->getIncludes())->find($id));
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => "Категории с id {$id} не существует",
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+
+        return new CategoryResource($this->categoryService->getCategory($id, $request->getIncludes()));
+
     }
 
     public function update(CategoryUpdateRequest $request, string $id): JsonResponse|CategoryResource

@@ -5,6 +5,8 @@ namespace App\Http\Resources\V1;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
+use Spatie\LaravelData\Optional;
 
 /**
  * @mixin Category
@@ -24,7 +26,10 @@ class CategoryResource extends JsonResource
             'attributes' => [
                 'name' => $this->name,
             ],
-            'includes' => TaskResource::collection($this->whenLoaded('tasks')),
+            'includes' => $this->when(
+                $this->tasks instanceof Collection,
+                fn() => TaskResource::collection($this->tasks)
+            ),
         ];
     }
 }
